@@ -28,4 +28,45 @@ class CargoRepositoryTest {
 
     }
 
+    @Test
+    void deveriaAtualizarUmCargo() {
+
+        Cargo cargo = new Cargo();
+        cargo.setDescricao("Desenvolvedor");
+
+        cargoRepository.save(cargo);
+
+        Optional<Cargo> cargoBD = cargoRepository.findById(cargo.getId());
+        Assertions.assertTrue(cargoBD.isPresent());
+        cargoBD.ifPresent(c -> Assertions.assertEquals(cargo.getDescricao(), c.getDescricao()));
+
+        cargoBD.ifPresent((c) -> {
+            c.setDescricao("Desenvolvedor Java");
+            cargoRepository.save(c);
+
+            cargoRepository.findById(c.getId()).ifPresent((c2) -> {
+                Assertions.assertEquals("Desenvolvedor Java", c2.getDescricao());
+            });
+
+        });
+    }
+
+    @Test
+    void deveriaExcluircargo() {
+
+        Cargo cargo = new Cargo();
+        cargo.setDescricao("Desenvolvedor");
+
+        cargoRepository.save(cargo);
+
+        Optional<Cargo> cargoBD = cargoRepository.findById(cargo.getId());
+        Assertions.assertTrue(cargoBD.isPresent());
+        cargoBD.ifPresent(c -> Assertions.assertEquals(cargo.getDescricao(), c.getDescricao()));
+
+        cargoRepository.deleteById(cargo.getId());
+
+        cargoBD = cargoRepository.findById(cargo.getId());
+        Assertions.assertFalse(cargoBD.isPresent());
+    }
+
 }
