@@ -1,4 +1,4 @@
-package io.com.rh.entidade;
+package io.com.rh.entity;
 
 import lombok.Data;
 
