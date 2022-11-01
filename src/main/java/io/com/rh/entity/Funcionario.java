@@ -1,10 +1,14 @@
 package io.com.rh.entity;
 
 import lombok.Data;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -28,10 +32,17 @@ public class Funcionario {
     private LocalDateTime dataContratacao;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Unidade unidade;
-
-    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cargo_id", nullable = false)
     private Cargo cargo;
 
+    @Fetch(FetchMode.SELECT)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "funcionarios_unidades",
+            joinColumns = @JoinColumn(name = "funcionario_id"), inverseJoinColumns = @JoinColumn(name = "unidade_id"))
+    private List<Unidade> unidades = new ArrayList<>();
+
+    public void addUnidade(Unidade unidade) {
+        this.unidades.add(unidade);
+    }
 
 }

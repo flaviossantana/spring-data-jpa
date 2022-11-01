@@ -1,5 +1,6 @@
 package io.com.rh.repository;
 
+import com.github.javafaker.Faker;
 import io.com.rh.entity.Cargo;
 import io.com.rh.entity.Funcionario;
 import io.com.rh.entity.Unidade;
@@ -9,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,25 +26,27 @@ class FuncionarioRepositoryTest {
     @Autowired
     private UnidadeRepository unidadeRepository;
 
+    private Faker faker = new Faker(new Locale("pt-br"));
+
     @Test
     void deveriaSalvarFuncionario() {
 
         Cargo cargo = new Cargo();
-        cargo.setDescricao("Desenvolvedor");
+        cargo.setDescricao(faker.job().title());
         cargoRepository.save(cargo);
 
         Unidade unidade = new Unidade();
-        unidade.setDescricao("Unidade 1");
-        unidade.setEndereco("Rua 1");
+        unidade.setDescricao(faker.address().streetAddress());
+        unidade.setEndereco(faker.address().fullAddress());
         unidadeRepository.save(unidade);
 
         Funcionario funcionario = new Funcionario();
-        funcionario.setCpf("99547785120");
-        funcionario.setNome("Fulano de Tals");
+        funcionario.setCpf(faker.idNumber().valid());
+        funcionario.setNome(faker.name().fullName());
         funcionario.setDataContratacao(LocalDateTime.now());
-        funcionario.setSalario(new BigDecimal("1200.00"));
+        funcionario.setSalario(new BigDecimal(faker.number().randomDouble(2, 1000, 5000)));
         funcionario.setCargo(cargo);
-        funcionario.setUnidade(unidade);
+        funcionario.addUnidade(unidade);
         funcionarioRepository.save(funcionario);
 
     }

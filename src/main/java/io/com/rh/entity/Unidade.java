@@ -3,6 +3,7 @@ package io.com.rh.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -20,8 +21,8 @@ public class Unidade {
     @Column(name = "desc_endereco", nullable = false, length = 200)
     private String endereco;
 
-    @OneToMany(mappedBy = "unidade")
-    private List<Funcionario> funcionario;
+    @ManyToMany(mappedBy = "unidades")
+    private List<Funcionario> funcionarios = new ArrayList<>();
 
 
 }
