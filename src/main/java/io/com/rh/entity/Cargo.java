@@ -3,6 +3,7 @@ package io.com.rh.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Entity
@@ -15,5 +16,8 @@ public class Cargo {
 
     @Column(name = "desc_cargo", nullable = false, length = 60)
     private String descricao;
+
+    @OneToMany(mappedBy = "cargo")
+    private List<Funcionario> funcionarios;
 
 }

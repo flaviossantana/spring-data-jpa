@@ -1,0 +1,11 @@
+version: "3.7"
+services:
+    rh-database:
+      image: mariadb:10.5
+      container_name: rh-mariadb
+      restart: always
+      environment:
+       MARIADB_ROOT_PASSWORD: root
+       MYSQL_DATABASE: rh-data
+      ports:
+        - 3306:3306
