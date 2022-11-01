@@ -8,7 +8,8 @@ Repositórios, Consultas, Projeções
 ```bash
 docker-compose up --build
 ```
-
+- https://hub.docker.com/_/mariadb
+- 
 ## Java Faker
 - É uma bliblioteca que gera dados falsos para testes.
 - Para adicionar a dependência no projeto:
@@ -19,7 +20,13 @@ docker-compose up --build
     <version>1.0.2</version>
 </dependency>
 ```
-
-## Referências
-- https://hub.docker.com/_/mariadb
 - https://github.com/DiUS/java-faker
+- 
+## Query Methods
+- São métodos que são criados no repositório para fazer consultas no banco de dados.
+````java
+public interface UserRepository extends Repository<User, Long> {
+  List<User> findDistinctByLastnameAndFirstname(String emailAddress, String lastname);
+}
+````
+- https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation
