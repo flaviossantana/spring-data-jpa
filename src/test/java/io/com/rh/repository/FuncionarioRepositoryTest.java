@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,7 +29,7 @@ class FuncionarioRepositoryTest {
     @Autowired
     private UnidadeRepository unidadeRepository;
 
-    private Faker faker = new Faker(new Locale("pt-br"));
+    private final Faker faker = new Faker(new Locale("pt-br"));
 
     @Test
     void deveriaSalvarFuncionario() {
@@ -46,14 +47,16 @@ class FuncionarioRepositoryTest {
         funcionario.setCpf(faker.idNumber().valid());
         funcionario.setNome(faker.name().fullName());
         funcionario.setDataContratacao(LocalDateTime.now());
-        funcionario.setSalario(new BigDecimal(faker.number().randomDouble(2, 1000, 5000)));
+        funcionario.setSalario(new BigDecimal(faker.number().randomNumber(5, true)));
         funcionario.setCargo(cargo);
         funcionario.addUnidade(unidade);
         funcionarioRepository.save(funcionario);
+
+        assertNotNull(funcionario.getId());
     }
 
     @Test
-    void deveriaBuscarFuncionarioPorNone(){
+    void deveriaBuscarFuncionarioPorNone() {
 
         Cargo cargo = new Cargo();
         cargo.setDescricao(faker.job().title());
@@ -68,7 +71,7 @@ class FuncionarioRepositoryTest {
         funcionario.setCpf(faker.idNumber().valid());
         funcionario.setNome(faker.name().fullName());
         funcionario.setDataContratacao(LocalDateTime.now());
-        funcionario.setSalario(new BigDecimal(faker.number().randomDouble(2, 1000, 5000)));
+        funcionario.setSalario(new BigDecimal(faker.number().randomNumber(5, true)));
         funcionario.setCargo(cargo);
         funcionario.addUnidade(unidade);
         funcionarioRepository.save(funcionario);
@@ -79,7 +82,7 @@ class FuncionarioRepositoryTest {
     }
 
     @Test
-    void deveriaDarExcecaoDeLazyInitializationExceptionAoDarGetEmCargo(){
+    void deveriaDarExcecaoDeLazyInitializationExceptionAoDarGetEmCargo() {
 
         Cargo cargo = new Cargo();
         cargo.setDescricao(faker.job().title());
@@ -94,7 +97,7 @@ class FuncionarioRepositoryTest {
         funcionario.setCpf(faker.idNumber().valid());
         funcionario.setNome(faker.name().fullName());
         funcionario.setDataContratacao(LocalDateTime.now());
-        funcionario.setSalario(new BigDecimal(faker.number().randomDouble(2, 1000, 5000)));
+        funcionario.setSalario(new BigDecimal(faker.number().randomNumber(5, true)));
         funcionario.setCargo(cargo);
         funcionario.addUnidade(unidade);
         funcionarioRepository.save(funcionario);
@@ -102,15 +105,19 @@ class FuncionarioRepositoryTest {
 
         List<Funcionario> buscaPorNome = funcionarioRepository.findByNome(funcionario.getNome());
         assertNotNull(buscaPorNome);
-        assertThrows(LazyInitializationException.class, () -> {
-            buscaPorNome.stream().findFirst().ifPresent(f -> f.getCargo().getDescricao());
 
+
+        Optional<Funcionario> first = buscaPorNome.stream().findFirst();
+        first.ifPresent(funcionario1 -> {
+            Cargo cargo1 = funcionario1.getCargo();
+            assertThrows(LazyInitializationException.class, cargo1::toString);
         });
 
     }
 
+
     @Test
-    void deveriaBuscarFuncionarioPorNoneComFetchEmCliente(){
+    void deveriaBuscarFuncionarioPorNoneComFetchEmCliente() {
 
         Cargo cargo = new Cargo();
         cargo.setDescricao(faker.job().title());
@@ -125,7 +132,7 @@ class FuncionarioRepositoryTest {
         funcionario.setCpf(faker.idNumber().valid());
         funcionario.setNome(faker.name().fullName());
         funcionario.setDataContratacao(LocalDateTime.now());
-        funcionario.setSalario(new BigDecimal(faker.number().randomDouble(2, 1000, 5000)));
+        funcionario.setSalario(new BigDecimal(faker.number().randomNumber(5, true)));
         funcionario.setCargo(cargo);
         funcionario.addUnidade(unidade);
         funcionarioRepository.save(funcionario);
