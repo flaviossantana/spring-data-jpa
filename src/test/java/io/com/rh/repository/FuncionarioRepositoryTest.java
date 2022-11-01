@@ -106,12 +106,17 @@ class FuncionarioRepositoryTest {
         List<Funcionario> buscaPorNome = funcionarioRepository.findByNome(funcionario.getNome());
         assertNotNull(buscaPorNome);
 
-
         Optional<Funcionario> first = buscaPorNome.stream().findFirst();
-        first.ifPresent(funcionario1 -> {
-            Cargo cargo1 = funcionario1.getCargo();
-            assertThrows(LazyInitializationException.class, cargo1::toString);
-        });
+
+        if(first.isPresent()){
+            Cargo cargoLIE = first.get().getCargo();
+            try {
+                fail(cargoLIE.getDescricao());
+            }catch (LazyInitializationException e){
+                assertTrue(true);
+            }
+
+        }
 
     }
 
@@ -144,4 +149,38 @@ class FuncionarioRepositoryTest {
         assertEquals(buscaPorNome.get(0).getCargo().getDescricao(), cargo.getDescricao());
     }
 
+    @Test
+    void findByNomeAndSalarioGreaterThanAndDataContratacao() {
+
+        Cargo cargo = new Cargo();
+        cargo.setDescricao(faker.job().title());
+        cargoRepository.save(cargo);
+
+        Unidade unidade = new Unidade();
+        unidade.setDescricao(faker.address().streetAddress());
+        unidade.setEndereco(faker.address().fullAddress());
+        unidadeRepository.save(unidade);
+
+        Funcionario funcionario = new Funcionario();
+        funcionario.setCpf(faker.idNumber().valid());
+        funcionario.setNome(faker.name().fullName());
+        funcionario.setDataContratacao(LocalDateTime.now());
+        funcionario.setSalario(new BigDecimal(faker.number().randomNumber(5, true)));
+        funcionario.setCargo(cargo);
+        funcionario.addUnidade(unidade);
+        funcionarioRepository.save(funcionario);
+
+        Funcionario funcionarioForaFiltro = new Funcionario();
+        funcionarioForaFiltro.setCpf(faker.idNumber().valid());
+        funcionarioForaFiltro.setNome(faker.name().fullName());
+        funcionarioForaFiltro.setDataContratacao(LocalDateTime.now());
+        funcionarioForaFiltro.setSalario(new BigDecimal("999.00"));
+        funcionarioForaFiltro.setCargo(cargo);
+        funcionarioForaFiltro.addUnidade(unidade);
+        funcionarioRepository.save(funcionarioForaFiltro);
+
+        List<Funcionario> funcionarios = funcionarioRepository.findBySalarioGreaterThanAndDataContratacaoLessThan(new BigDecimal(100), LocalDateTime.now());
+        assertNotNull(funcionarios);
+
+    }
 }
