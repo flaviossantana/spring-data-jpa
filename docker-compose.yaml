@@ -1,8 +1,8 @@
 version: "3.7"
 services:
-    db:
+    rh-database:
       image: mariadb:10.5
-      container_name: db
+      container_name: rh-mariadb
       restart: always
       environment:
        MARIADB_ROOT_PASSWORD: root
