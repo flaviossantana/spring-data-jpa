@@ -16,5 +16,7 @@ public interface FuncionarioRepository  extends CrudRepository<Funcionario, Long
     @Query("SELECT f FROM Funcionario f JOIN FETCH f.cargo c WHERE f.nome = :nome")
     List<Funcionario> findByNomeFetchCliente(String nome);
     List<Funcionario> findBySalarioGreaterThanAndDataContratacaoLessThan(BigDecimal salario, LocalDateTime dataContratacao);
+    @Query(nativeQuery = true, value = "SELECT * FROM funcionarios f join cargos c on f.cargo_id = c.id WHERE f.dt_contratacao < :dataContratacao")
+    List<Funcionario> buscarTodosComDataContratacaoMaiorQue(LocalDateTime dataContratacao);
 
 }

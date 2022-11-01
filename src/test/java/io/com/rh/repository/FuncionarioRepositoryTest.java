@@ -183,4 +183,11 @@ class FuncionarioRepositoryTest {
         assertNotNull(funcionarios);
 
     }
+
+    @Test
+    void deveriaBuscarTodasContratacoesMenorQueADataInformada(){
+        List<Funcionario> funcionarios = funcionarioRepository.buscarTodosComDataContratacaoMaiorQue(LocalDateTime.now());
+        assertNotNull(funcionarios);
+    }
+
 }
